@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Flashcard App</string>
+    <string name="email">Enter your email</string>
+    <string name="password">Enter your password</string>
+    <string name="forgot_password">Forgot password ?</string>
+    <string name="reset">Reset your password</string>
+    <string name="no_register">No register yet ? Sign up here</string>
+    <string name="sign_in">Sign in</string>
+    <string name="username">Username</string>
+    <string name="retype_password">Retype password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="already_registered">Already registered ? Sign in here !</string>
+
+    <!-- Home screen strings -->
+    <string name="home_title">Welcome home, khanh tran !</string>
+    <string name="nav_home_desc">Home</string>
+    <string name="nav_cards_desc">Cards</string>
+    <string name="nav_stats_desc">Stats</string>
+    <string name="nav_profile_desc">Profile</string>
+
+    <!-- Stats boxes -->
+    <string name="stat1_number">12</string>
+    <string name="stat1_label">Today completed</string>
+    <string name="stat2_number">8</string>
+    <string name="stat2_label">Decks created</string>
+
+    <!-- New welcome text -->
+    <string name="welcome_back">Welcome back, %1$s!</string>
+
+    <!-- Deck details placeholders -->
+    <string name="deck_title_placeholder">Deck Title</string>
+    <string name="deck_description_placeholder">Deck description goes here. A short summary of what this deck contains.</string>
+    <string name="cd_add_card">Add card</string>
+    <string name="cd_edit_deck">Edit deck</string>
+    <string name="cd_delete_deck">Delete deck</string>
+
+    <!-- Deck add info -->
+    <string name="add_card_title">Adding a new card</string>
+    <string name="hint_front_side">Enter front side content</string>
+    <string name="hint_back_side">Enter back side content</string>
+    <string name="confirm_button">Confirm</string>
+
+    <!-- Stat screen -->
+    <string name="statistics_title">Statistics</string>
+    <string name="statA_value_placeholder">42</string>
+    <string name="statA_label">Completed today</string>
+    <string name="statB_value_placeholder">8</string>
+    <string name="statB_label">Decks created</string>
+    <string name="chart_content_desc">Statistics chart</string>
+
+    <!-- Profile screen -->
+    <string name="profile_username_placeholder">Username</string>
+    <string name="profile_email_placeholder">user@example.com</string>
+    <string name="cd_user_avatar">User avatar</string>
+    <string name="cd_edit_profile">Edit profile</string>
+    <string name="sign_out">Sign out</string>
+
+    <!-- New: Study button label -->
+    <string name="study">Study</string>
+
+    <!-- New: Back button content description -->
+    <string name="cd_navigate_back">Navigate back</string>
+
+    <!-- Deck creation placeholders and button label -->
+    <string name="add_deck_title">Add New Deck</string>
+    <string name="hint_deck_name">Deck name</string>
+    <string name="hint_deck_description">Deck description (optional)</string>
+    <string name="create_deck_button">Create deck</string>
+</resources>
