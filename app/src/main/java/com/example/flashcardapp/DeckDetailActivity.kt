@@ -79,6 +79,18 @@ class DeckDetailActivity : AppCompatActivity() {
             confirmAndDeleteDeck()
         }
 
+        // Study button navigates to StudyActivity
+        binding.btnStudy.setOnClickListener {
+            val id = currentDeck?.id ?: intent.getIntExtra(EXTRA_DECK_ID, -1)
+            if (id == -1) {
+                Toast.makeText(this, "Missing deck id", Toast.LENGTH_SHORT).show()
+            } else {
+                val i = Intent(this, StudyActivity::class.java)
+                i.putExtra(EXTRA_DECK_ID, id)
+                startActivity(i)
+            }
+        }
+
         // Click on title/description opens edit only in edit mode
         binding.tvDeckNameTop.setOnClickListener {
             if (editMode) showEditTitleDialog()

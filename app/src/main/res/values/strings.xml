@@ -18,11 +18,11 @@
     <string name="nav_stats_desc">Stats</string>
     <string name="nav_profile_desc">Profile</string>
 
-    <!-- Stats boxes -->
-    <string name="stat1_number">12</string>
+    <!-- Stats boxes for Home -->
+    <string name="stat1_number">0</string>
     <string name="stat1_label">Today completed</string>
-    <string name="stat2_number">8</string>
-    <string name="stat2_label">Decks created</string>
+    <string name="stat2_number">0</string>
+    <string name="stat2_label">Day streak</string>
 
     <!-- New welcome text -->
     <string name="welcome_back">Welcome back, %1$s!</string>
@@ -42,10 +42,10 @@
 
     <!-- Stat screen -->
     <string name="statistics_title">Statistics</string>
-    <string name="statA_value_placeholder">42</string>
-    <string name="statA_label">Completed today</string>
-    <string name="statB_value_placeholder">8</string>
-    <string name="statB_label">Decks created</string>
+    <string name="statA_value_placeholder">0</string>
+    <string name="statA_label">Total completed</string>
+    <string name="statB_value_placeholder">0</string>
+    <string name="statB_label">Total decks</string>
     <string name="chart_content_desc">Statistics chart</string>
 
     <!-- Profile screen -->
@@ -66,4 +66,8 @@
     <string name="hint_deck_name">Deck name</string>
     <string name="hint_deck_description">Deck description (optional)</string>
     <string name="create_deck_button">Create deck</string>
+
+    <!-- Percent format for adapter -->
+    <string name="percent_format">%1$d%%</string>
+    <string name="deck_progress_percent_format">%1$d%%</string>
 </resources>

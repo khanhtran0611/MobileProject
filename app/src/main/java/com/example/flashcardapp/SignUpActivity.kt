@@ -12,6 +12,8 @@ import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 class SignUpActivity : AppCompatActivity() {
     lateinit var binding: SignUpBinding
@@ -78,13 +80,16 @@ class SignUpActivity : AppCompatActivity() {
 
                     // Insert into "User" table with correct field names from User.kt model
                     try {
+                        val nowIso = OffsetDateTime.now(ZoneOffset.UTC).toString()
                         val newUser = User(
                             id = null, // Will be auto-incremented by Supabase
                             username = username,
                             today = 0,
                             total_created = 0,
                             total_learned = 0,
-                            user_id = userId
+                            user_id = userId,
+                            lastime_access = nowIso,
+                            streak = 0
                         )
 
                         Log.d(TAG, "Inserting user data into database: $newUser")

@@ -14,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FlashcardApp">
         <activity
+            android:name=".StudyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".DeckDetailActivity"
             android:exported="false" />
         <activity

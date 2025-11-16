@@ -12,6 +12,13 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeParseException
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.JsonPrimitive
 
 class SigninActivity : AppCompatActivity() {
     lateinit var binding: SignInBinding
@@ -87,6 +94,55 @@ class SigninActivity : AppCompatActivity() {
                 if (userList.isNotEmpty()) {
                     val user = userList.first()
                     Log.d(TAG, "Sign in successful for user: ${user.username}")
+
+                    // Compare lastime_access (date only) with today UTC
+                    val now = OffsetDateTime.now(ZoneOffset.UTC)
+                    val todayUtc = now.toLocalDate()
+                    val yesterdayUtc = todayUtc.minusDays(1)
+                    val lastDate: LocalDate? = try {
+                        user.lastime_access?.let { OffsetDateTime.parse(it).toLocalDate() }
+                    } catch (e: DateTimeParseException) {
+                        Log.w(TAG, "Failed to parse lastime_access='${user.lastime_access}', will treat as no recent access", e)
+                        null
+                    }
+
+                    when {
+                        lastDate == todayUtc -> {
+                            Log.d(TAG, "Last access is today; no streak update.")
+                        }
+                        lastDate == yesterdayUtc -> {
+                            // Exactly yesterday: increment streak and update lastime_access to now
+                            val newStreak = (user.streak ?: 0) + 1
+                            Log.d(TAG, "Yesterday login detected. Incrementing streak to $newStreak and updating lastime_access to $now")
+                            try {
+                                val payload = buildJsonObject {
+                                    put("streak", JsonPrimitive(newStreak))
+                                    put("lastime_access", JsonPrimitive(now.toString()))
+                                }
+                                SupabaseProvider.client.from("User").update(payload) {
+                                    filter { eq("user_id", userId) }
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to update streak/lastime_access: ${e.message}", e)
+                            }
+                        }
+                        else -> {
+                            // Not yesterday or today: reset streak to 0 and update lastime_access
+                            Log.d(TAG, "Last access not yesterday or today (lastDate=$lastDate). Resetting streak to 0 and updating lastime_access to $now")
+                            try {
+                                val payload = buildJsonObject {
+                                    put("streak", JsonPrimitive(0))
+                                    put("lastime_access", JsonPrimitive(now.toString()))
+                                }
+                                SupabaseProvider.client.from("User").update(payload) {
+                                    filter { eq("user_id", userId) }
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to reset streak/update lastime_access: ${e.message}", e)
+                            }
+                        }
+                    }
+
                     Toast.makeText(this@SigninActivity, "Welcome ${user.username}!", Toast.LENGTH_SHORT).show()
 
                     // Set globals

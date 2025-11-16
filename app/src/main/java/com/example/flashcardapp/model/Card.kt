@@ -21,5 +21,8 @@ data class Card(
     val deck_id : Int,
 
     @SerialName("learned")
-    val learned : Boolean? = null
+    val learned : Boolean? = null,
+
+    @SerialName("learned_today")
+    val learned_today : Boolean? = null
 )

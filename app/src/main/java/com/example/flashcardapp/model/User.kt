@@ -32,5 +32,11 @@ data class User (
     val recent2 : Int? = null,
 
     @SerialName("user_id")
-    val user_id : String
+    val user_id : String,
+
+    @SerialName("lastime_access")
+    val lastime_access : String? = null,
+
+    @SerialName("streak")
+    val streak : Int? = null
 )

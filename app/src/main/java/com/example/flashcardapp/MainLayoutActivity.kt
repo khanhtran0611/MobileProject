@@ -3,7 +3,11 @@ package com.example.flashcardapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.flashcardapp.databinding.MainLayoutScreenBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 
 class MainLayoutActivity : AppCompatActivity(){
     lateinit var binding: MainLayoutScreenBinding
@@ -53,6 +57,16 @@ class MainLayoutActivity : AppCompatActivity(){
         }
 
         binding.bottomNavigation.setOnItemReselectedListener { /* no-op */ }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                UserSession.usernameFlow.collectLatest { newName ->
+                    if (newName.isNotBlank()) {
+                        binding.welcomeText.text = getString(R.string.welcome_back, newName)
+                    }
+                }
+            }
+        }
     }
 
     private fun baseArgs(): Bundle = Bundle().apply {

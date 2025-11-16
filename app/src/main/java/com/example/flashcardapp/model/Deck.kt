@@ -14,6 +14,9 @@ data class Deck(
     @SerialName("progress")
     val progress : Int? = null,
 
+    @SerialName("progress_today")
+    val progress_today : Int? = null,
+
     @SerialName("description")
     val description : String? = null,
 
@@ -22,4 +25,6 @@ data class Deck(
 
     @SerialName("total")
     val total : Int? = null
+
+
 )
