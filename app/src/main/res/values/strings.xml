@@ -60,6 +60,7 @@
 
     <!-- New: Back button content description -->
     <string name="cd_navigate_back">Navigate back</string>
+    <string name="back">Back</string>
 
     <!-- Deck creation placeholders and button label -->
     <string name="add_deck_title">Add New Deck</string>

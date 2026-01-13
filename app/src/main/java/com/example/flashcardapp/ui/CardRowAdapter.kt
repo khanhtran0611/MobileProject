@@ -16,7 +16,8 @@ import com.example.flashcardapp.model.Card
  */
 class CardRowAdapter(
     private var items: List<Card>,
-    private val onCellClick: (card: Card, side: CardSide) -> Unit = { _, _ -> }
+    private val onCellClick: (card: Card, side: CardSide) -> Unit = { _, _ -> },
+    private val onCellLongClick: (card: Card, side: CardSide) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<CardRowAdapter.RowVH>() {
 
     enum class CardSide { FRONT, BACK }
@@ -55,6 +56,15 @@ class CardRowAdapter(
 
         holder.cardLeft.setOnClickListener { onCellClick(card, CardSide.FRONT) }
         holder.cardRight.setOnClickListener { onCellClick(card, CardSide.BACK) }
+
+        holder.cardLeft.setOnLongClickListener {
+            onCellLongClick(card, CardSide.FRONT)
+            true
+        }
+        holder.cardRight.setOnLongClickListener {
+            onCellLongClick(card, CardSide.BACK)
+            true
+        }
     }
 
     fun submitList(newItems: List<Card>) {

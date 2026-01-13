@@ -39,6 +39,19 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+//    packaging {
+//        resources {
+//            excludes += setOf(
+//                "META-INF/NOTICE.md",
+//                "META-INF/LICENSE.md",
+//                "META-INF/NOTICE",
+//                "META-INF/LICENSE",
+//                "META-INF/NOTICE.txt",
+//                "META-INF/LICENSE.txt"
+//            )
+//        }
+//    }
 }
 
 dependencies {
@@ -78,6 +91,9 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+//    implementation("com.sun.mail:android-mail:1.6.7")
+//    implementation("com.sun.mail:android-activation:1.6.7")
     // Thư viện lịch dành cho XML (View)
 //    implementation("com.kizitonwose.calendar:view:2.6.0")
 //

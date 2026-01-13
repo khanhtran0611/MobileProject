@@ -42,6 +42,13 @@ class SigninActivity : AppCompatActivity() {
             finish()
         }
 
+        // Navigate to ForgotPassword when reset password button is clicked
+        binding.resetPasswordButton.setOnClickListener {
+            Log.d(TAG, "Reset password button clicked, navigating to ForgotPasswordActivity")
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
+
         // Sign in button click listener
         binding.signInButton.setOnClickListener {
             val email = binding.emailInput.text?.toString()?.trim() ?: ""

@@ -47,15 +47,22 @@ class DeckDetailActivity : AppCompatActivity() {
             return
         }
 
-        // RecyclerView setup for cards with cell click support
-        adapter = CardRowAdapter(emptyList()) { card, side ->
-            if (editMode) {
-                when (side) {
-                    CardSide.FRONT -> showEditCardDialog(card, isFront = true)
-                    CardSide.BACK -> showEditCardDialog(card, isFront = false)
+        // RecyclerView setup for cards with cell click and long-press support
+        adapter = CardRowAdapter(
+            emptyList(),
+            onCellClick = { card, side ->
+                if (editMode) {
+                    when (side) {
+                        CardSide.FRONT -> showEditCardDialog(card, isFront = true)
+                        CardSide.BACK -> showEditCardDialog(card, isFront = false)
+                    }
                 }
+            },
+            onCellLongClick = { card, _ ->
+                // Long press to delete card
+                confirmAndDeleteCard(card)
             }
-        }
+        )
         binding.rvDeckCards.layoutManager = LinearLayoutManager(this)
         binding.rvDeckCards.adapter = adapter
 
@@ -304,6 +311,36 @@ class DeckDetailActivity : AppCompatActivity() {
                         finish()
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed deleting deck", e)
+                        Toast.makeText(this@DeckDetailActivity, "Delete failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun confirmAndDeleteCard(card: Card) {
+        val cardId = card.id ?: run {
+            Toast.makeText(this, "Card id missing", Toast.LENGTH_SHORT).show()
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Delete Card")
+            .setMessage("Are you sure you want to delete this card?")
+            .setPositiveButton("Delete") { dialog, _ ->
+                dialog.dismiss()
+                lifecycleScope.launch {
+                    try {
+                        Log.d(TAG, "Deleting card id=$cardId")
+                        SupabaseProvider.client.from("Card").delete {
+                            filter { eq("id", cardId) }
+                        }
+                        Toast.makeText(this@DeckDetailActivity, "Card deleted", Toast.LENGTH_SHORT).show()
+                        deckChanged = true
+                        // Refresh the card list
+                        refreshCards()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed deleting card", e)
                         Toast.makeText(this@DeckDetailActivity, "Delete failed: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
