@@ -9,8 +9,17 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 import com.example.flashcardapp.model.Deck
 import com.example.flashcardapp.model.User
+import com.example.flashcardapp.model.LearningLogs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.flashcardapp.ui.DeckStatsAdapter
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.components.XAxis
+import android.graphics.Color
+import java.text.SimpleDateFormat
+import java.util.*
 
 class StatFragment : Fragment(){
     private var _binding: StatScreenBinding? = null
@@ -76,6 +85,121 @@ class StatFragment : Fragment(){
                 Log.e("StatFragment", "Failed loading total_created: ${e.message}", e)
                 binding.statBValue.text = "0"
             }
+
+            // Load learning logs and setup chart
+            try {
+                val learningLogs: List<LearningLogs> = SupabaseProvider.client
+                    .from("learning_logs")
+                    .select { filter { eq("user_id", userId) } }
+                    .decodeList()
+                Log.d("StatFragment", "Loaded ${learningLogs.size} learning logs")
+                setupLineChart(learningLogs)
+            } catch (e: Exception) {
+                Log.e("StatFragment", "Failed loading learning logs: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun setupLineChart(logs: List<LearningLogs>) {
+        if (logs.isEmpty()) {
+            Log.d("StatFragment", "No learning logs data")
+            // Show empty chart or message
+            binding.lineChart.clear()
+            binding.lineChart.setNoDataText("No learning data available")
+            binding.lineChart.invalidate()
+            return
+        }
+
+        // Sort logs by day (ascending)
+        val sortedLogs = logs.sortedBy { it.day }
+
+        val entries = mutableListOf<Entry>()
+        val dateLabels = mutableListOf<String>()
+        val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+        sortedLogs.forEachIndexed { index, log ->
+            val totalLearned = log.total_learned?.toFloat() ?: 0f
+            entries.add(Entry(index.toFloat(), totalLearned))
+
+            // Format date for x-axis labels
+            val dayStr = log.day ?: ""
+            try {
+                val parsedDate = inputDateFormat.parse(dayStr.take(19))
+                dateLabels.add(parsedDate?.let { dateFormat.format(it) } ?: dayStr.take(10))
+            } catch (e: Exception) {
+                try {
+                    val simpleParse = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dayStr.take(10))
+                    dateLabels.add(simpleParse?.let { dateFormat.format(it) } ?: dayStr.take(10))
+                } catch (e2: Exception) {
+                    dateLabels.add(dayStr.take(10))
+                }
+            }
+        }
+
+        // Create dataset with styling
+        val dataSet = LineDataSet(entries, "Decks Learned Per Day").apply {
+            color = Color.parseColor("#6200EE")
+            lineWidth = 3f
+            circleRadius = 5f
+            setCircleColor(Color.parseColor("#3700B3"))
+            setDrawCircleHole(false)
+            valueTextSize = 11f
+            valueTextColor = Color.BLACK
+            setDrawValues(true)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            setDrawFilled(true)
+            fillColor = Color.parseColor("#BB86FC")
+            fillAlpha = 50
+        }
+
+        val lineData = LineData(dataSet)
+
+        binding.lineChart.apply {
+            data = lineData
+            description.isEnabled = false
+            setDrawGridBackground(false)
+
+            // X-axis configuration
+            xAxis.apply {
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return if (value.toInt() in dateLabels.indices) {
+                            dateLabels[value.toInt()]
+                        } else ""
+                    }
+                }
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                setDrawGridLines(false)
+                textSize = 10f
+                textColor = Color.DKGRAY
+            }
+
+            // Y-axis configuration
+            axisLeft.apply {
+                granularity = 1f
+                axisMinimum = 0f
+                textSize = 11f
+                textColor = Color.DKGRAY
+                setDrawGridLines(true)
+                gridColor = Color.LTGRAY
+            }
+            axisRight.isEnabled = false
+
+            // Legend configuration
+            legend.isEnabled = true
+            legend.textSize = 12f
+
+            // Enable touch gestures
+            setTouchEnabled(true)
+            isDragEnabled = true
+            setScaleEnabled(true)
+            setPinchZoom(true)
+
+            // Animation
+            animateX(1000)
+            invalidate()
         }
     }
 

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     kotlin("plugin.serialization") version "2.2.0"
+    id("kotlin-kapt")
 }
 
 android {
@@ -69,4 +70,17 @@ dependencies {
     implementation(libs.supabaseAuth)
     implementation(libs.supabaseRealtime)
     implementation(libs.ktorClientAndroid)
+
+    // Room components
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // Thư viện lịch dành cho XML (View)
+//    implementation("com.kizitonwose.calendar:view:2.6.0")
+//
+//    // Thư viện bổ trợ tính toán ngày tháng (nếu cần)
+//    implementation("dev.chrisbanes.snapper:snapper:0.3.0")
 }

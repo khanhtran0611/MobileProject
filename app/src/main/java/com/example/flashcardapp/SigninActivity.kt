@@ -106,17 +106,21 @@ class SigninActivity : AppCompatActivity() {
                         null
                     }
 
+                    // Initialize currentStreak from DB
+                    var currentStreak = user.streak ?: 0
+
                     when {
                         lastDate == todayUtc -> {
                             Log.d(TAG, "Last access is today; no streak update.")
+                            // streak remains as fetched from DB
                         }
                         lastDate == yesterdayUtc -> {
                             // Exactly yesterday: increment streak and update lastime_access to now
-                            val newStreak = (user.streak ?: 0) + 1
-                            Log.d(TAG, "Yesterday login detected. Incrementing streak to $newStreak and updating lastime_access to $now")
+                            currentStreak += 1
+                            Log.d(TAG, "Yesterday login detected. Incrementing streak to $currentStreak and updating lastime_access to $now")
                             try {
                                 val payload = buildJsonObject {
-                                    put("streak", JsonPrimitive(newStreak))
+                                    put("streak", JsonPrimitive(currentStreak))
                                     put("lastime_access", JsonPrimitive(now.toString()))
                                 }
                                 SupabaseProvider.client.from("User").update(payload) {
@@ -128,10 +132,11 @@ class SigninActivity : AppCompatActivity() {
                         }
                         else -> {
                             // Not yesterday or today: reset streak to 0 and update lastime_access
+                            currentStreak = 0
                             Log.d(TAG, "Last access not yesterday or today (lastDate=$lastDate). Resetting streak to 0 and updating lastime_access to $now")
                             try {
                                 val payload = buildJsonObject {
-                                    put("streak", JsonPrimitive(0))
+                                    put("streak", JsonPrimitive(currentStreak))
                                     put("lastime_access", JsonPrimitive(now.toString()))
                                 }
                                 SupabaseProvider.client.from("User").update(payload) {
@@ -148,6 +153,7 @@ class SigninActivity : AppCompatActivity() {
                     // Set globals
                     UserSession.userId = userId
                     UserSession.username = user.username
+                    UserSession.streak = currentStreak
 
                     // Navigate to MainLayoutActivity and pass extras
                     val intent = Intent(this@SigninActivity, MainLayoutActivity::class.java)

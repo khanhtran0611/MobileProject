@@ -14,6 +14,9 @@ object UserSession {
             field = value
         }
 
+    private val _usernameFlow = MutableStateFlow("")
+    val usernameFlow: StateFlow<String> = _usernameFlow
+
     @Volatile
     var username: String? = null
         set(value) {
@@ -21,6 +24,6 @@ object UserSession {
             _usernameFlow.value = value ?: ""
         }
 
-    private val _usernameFlow = MutableStateFlow("")
-    val usernameFlow: StateFlow<String> = _usernameFlow
+    @Volatile
+    var streak: Int = 0
 }
